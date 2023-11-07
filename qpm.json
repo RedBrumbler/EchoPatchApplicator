@@ -1,0 +1,22 @@
+{
+  "sharedDir": "shared",
+  "dependenciesDir": "extern",
+  "info": {
+    "name": "whatauth",
+    "id": "whatauth",
+    "version": "0.1.0",
+    "url": null,
+    "additionalData": {
+      "overrideSoName": "libwhatauth.so",
+      "cmake": false
+    }
+  },
+  "dependencies": [
+    {
+      "id": "fmt",
+      "versionRange": "^10.0.0",
+      "additionalData": {}
+    }
+  ],
+  "workspace": null
+}
