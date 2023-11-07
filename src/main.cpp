@@ -14,4 +14,5 @@ extern "C" void setup(CModInfo* info) {
 extern "C" void load() {
   LOG_INFO("Patching entitlement check in echoVR from branch " GIT_BRANCH " (0x{:X}) by " GIT_USER, GIT_COMMIT);
   install_csysmodule_load_hook();
+  install_ovr_hooks();
 }
