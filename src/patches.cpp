@@ -87,6 +87,8 @@ void install_csysmodule_load_hook() {
 void install_entitlement_patch() {
   auto addr = get_entitlement_patch_address();
   if (!addr) return;
+  if (!protect(addr, PROT_READ | PROT_WRITE | PROT_EXEC)) return;
 
   *addr = 0x14000007;
+  protect(addr, PROT_READ | PROT_EXEC);
 }
