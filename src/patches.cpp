@@ -44,7 +44,7 @@ uint32_t* get_entitlement_patch_address() {
   auto base = get_pns_ovr_base();
   if (!base) return nullptr;
 
-  return (uint32_t*)(base + offset);
+  return (uint32_t*)((uintptr_t)base + offset);
 }
 
 void install_entitlement_patch() {
@@ -59,8 +59,8 @@ void install_entitlement_patch() {
 void install_prerequisites_pass_patch() {
   auto base = get_pns_ovr_base();
   if (!base) return;
-  auto beq_1 = base + 0x1eda14;
-  auto beq_2 = base + 0x1eda34;
+  auto beq_1 = (uint32_t*)((uintptr_t)base + 0x1eda14);
+  auto beq_2 = (uint32_t*)((uintptr_t)base + 0x1eda34);
 
   if (!protect(beq_1, PROT_READ | PROT_WRITE | PROT_EXEC)) return;
   static constexpr auto nop_ins = 0xd503201f;
