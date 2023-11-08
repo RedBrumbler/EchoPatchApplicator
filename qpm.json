@@ -25,9 +25,12 @@
     {
       "id": "capstone",
       "versionRange": "^0.1.0",
-      "additionalData": {
-        "headersOnly": true
-      }
+      "additionalData": {}
+    },
+    {
+      "id": "yodel",
+      "versionRange": "^0.0.2",
+      "additionalData": {}
     }
   ],
   "workspace": null

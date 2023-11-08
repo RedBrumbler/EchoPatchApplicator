@@ -27,6 +27,11 @@
         "id": "capstone",
         "versionRange": "^0.1.0",
         "additionalData": {}
+      },
+      {
+        "id": "yodel",
+        "versionRange": "^0.0.2",
+        "additionalData": {}
       }
     ],
     "workspace": null
@@ -64,6 +69,19 @@
         }
       },
       "version": "10.0.0"
+    },
+    {
+      "dependency": {
+        "id": "yodel",
+        "versionRange": "=0.0.2",
+        "additionalData": {
+          "soLink": "https://github.com/RedBrumbler/Yodel/releases/download/v0.0.2/libyodel.so",
+          "overrideSoName": "libyodel.so",
+          "branchName": "version/v0_0_2",
+          "cmake": false
+        }
+      },
+      "version": "0.0.2"
     },
     {
       "dependency": {
