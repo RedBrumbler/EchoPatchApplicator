@@ -47,14 +47,6 @@ uint32_t* get_entitlement_patch_address() {
   return (uint32_t*)(base + offset);
 }
 
-uint32_t* get_prerequisites_check_address() {
-  static constexpr auto offset = 0x1eda14;
-  auto base = get_pns_ovr_base();
-  if (!base) return nullptr;
-
-  return (uint32_t*)(base + offset);
-}
-
 void install_entitlement_patch() {
   auto addr = get_entitlement_patch_address();
   if (!addr) return;
@@ -65,12 +57,17 @@ void install_entitlement_patch() {
 }
 
 void install_prerequisites_pass_patch() {
-  auto addr = get_prerequisites_check_address();
-  if (!addr) return;
-  if (!protect(addr, PROT_READ | PROT_WRITE | PROT_EXEC)) return;
+  auto base = get_pns_ovr_base();
+  if (!base) return;
+  auto beq_1 = base + 0x1eda14;
+  auto beq_2 = base + 0x1eda34;
+
+  if (!protect(beq_1, PROT_READ | PROT_WRITE | PROT_EXEC)) return;
   static constexpr auto nop_ins = 0xd503201f;
-  *addr = nop_ins;
-  protect(addr, PROT_READ | PROT_EXEC);
+
+  *beq_1 = nop_ins;
+  *beq_2 = nop_ins;
+  protect(beq_1, PROT_READ | PROT_EXEC);
 }
 
 uint32_t* get_csysmodule_load_address() {
