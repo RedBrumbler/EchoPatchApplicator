@@ -1,6 +1,6 @@
-# What auth?
+# OfflineEchoQuest
 
-Skips the entitlement check in the abandoned game echovr by patching `libpnsovr.so::RadPluginMain()`
+Attempts to implement the same patches as offline echo for PC so you can do the same things that offline echo for PC allows you to
 
 ## Installation
 
