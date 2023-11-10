@@ -2,12 +2,12 @@
   "sharedDir": "shared",
   "dependenciesDir": "extern",
   "info": {
-    "name": "whatauth",
-    "id": "whatauth",
+    "name": "offline-echo",
+    "id": "offline-echo",
     "version": "0.1.0",
     "url": null,
     "additionalData": {
-      "overrideSoName": "libwhatauth.so",
+      "overrideSoName": "liboffline-echo.so",
       "cmake": false
     }
   },
