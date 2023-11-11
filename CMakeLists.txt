@@ -21,7 +21,6 @@ add_library(
     ${CMAKE_PROJECT_NAME}
     SHARED
     ${SOURCE_DIR}/main.cpp
-    ${SOURCE_DIR}/util.cpp
     ${SOURCE_DIR}/patches.cpp
     ${SOURCE_DIR}/access_token_cb_patch.cpp
     ${SOURCE_DIR}/org_scoped_cb_patch.cpp
@@ -41,6 +40,12 @@ if (QUEST)
     add_compile_definitions(QUEST)
     add_compile_definitions(FMT_HEADER_ONLY)
     target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${EXTERN_DIR}/includes)
-    target_link_libraries(${CMAKE_PROJECT_NAME} log ${EXTERN_DIR}/libs/libflamingo.so ${EXTERN_DIR}/libs/libyodel.so)
+    target_link_libraries(
+        ${CMAKE_PROJECT_NAME}
+        log
+        ${EXTERN_DIR}/libs/libflamingo.so
+        ${EXTERN_DIR}/libs/libyodel.so
+        ${EXTERN_DIR}/libs/libecho-utils.so
+    )
     target_include_directories(${CMAKE_PROJECT_NAME} SYSTEM PRIVATE ${EXTERN_DIR}/includes/fmt/fmt/include)
 endif()
