@@ -1,9 +1,9 @@
-#include "util.hpp"
+#include "Util.hpp"
 #include <sys/mman.h>
 #include "log.h"
 
 // credits to https://github.com/ikoz/AndroidSubstrate_hookingC_examples/blob/master/nativeHook3/jni/nativeHook3.cy.cpp
-uintptr_t baseAddr(char const* soname) {
+uintptr_t Util::baseAddr(char const* soname) {
   if (soname == NULL) return (uintptr_t)NULL;
 
   FILE* f = NULL;
@@ -44,7 +44,7 @@ uintptr_t baseAddr(char const* soname) {
   return (uintptr_t)NULL;
 }
 
-bool protect(uint32_t* target, int protection) {
+bool Util::protect(uint32_t* target, int protection) {
   constexpr static auto kPageSize = 4096ULL;
 
   auto* page_aligned_target = reinterpret_cast<uint32_t*>(reinterpret_cast<uint64_t>(target) & ~(kPageSize - 1));

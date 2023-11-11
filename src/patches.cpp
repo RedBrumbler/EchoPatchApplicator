@@ -10,12 +10,10 @@
 #include "flamingo/shared/trampoline.hpp"
 #include "yodel/shared/modloader.h"
 
+#include "Util.hpp"
 #include "log.h"
-#include "util.hpp"
 
 using namespace std::string_view_literals;
-
-#pragma region entitlementpatches
 
 void* pns_ovr_handle;
 uint32_t* pns_ovr_base;
@@ -35,7 +33,7 @@ uint32_t* get_pns_ovr_base() {
   auto handle = get_pns_ovr_handle();
   if (!handle) return nullptr;
 
-  pns_ovr_base = (uint32_t*)baseAddr("libpnsovr.so");
+  pns_ovr_base = (uint32_t*)Util::baseAddr("libpnsovr.so");
   return pns_ovr_base;
 }
 
@@ -50,10 +48,10 @@ uint32_t* get_entitlement_patch_address() {
 void install_entitlement_patch() {
   auto addr = get_entitlement_patch_address();
   if (!addr) return;
-  if (!protect(addr, PROT_READ | PROT_WRITE | PROT_EXEC)) return;
+  if (!Util::protect(addr, PROT_READ | PROT_WRITE | PROT_EXEC)) return;
 
   *addr = 0x14000007;
-  protect(addr, PROT_READ | PROT_EXEC);
+  Util::protect(addr, PROT_READ | PROT_EXEC);
 }
 
 void install_prerequisites_pass_patch() {
@@ -62,12 +60,12 @@ void install_prerequisites_pass_patch() {
   auto beq_1 = (uint32_t*)((uintptr_t)base + 0x1eda14);
   auto beq_2 = (uint32_t*)((uintptr_t)base + 0x1eda34);
 
-  if (!protect(beq_1, PROT_READ | PROT_WRITE | PROT_EXEC)) return;
+  if (!Util::protect(beq_1, PROT_READ | PROT_WRITE | PROT_EXEC)) return;
   static constexpr auto nop_ins = 0xd503201f;
 
   *beq_1 = nop_ins;
   *beq_2 = nop_ins;
-  protect(beq_1, PROT_READ | PROT_EXEC);
+  Util::protect(beq_1, PROT_READ | PROT_EXEC);
 }
 
 uint32_t* get_csysmodule_load_address() {
@@ -81,14 +79,19 @@ uint32_t* get_csysmodule_load_address() {
   return address;
 }
 
-void install_csysmodule_load_hook() {
-  auto addr = get_csysmodule_load_address();
-  if (!addr) return;
-  if (!protect(addr, PROT_READ | PROT_WRITE | PROT_EXEC)) return;
+namespace CallbackPatch {
+void install_loggedincb_hook();
+void install_access_token_hook();
+}  // namespace CallbackPatch
 
-  static auto trampoline = flamingo::TrampolineAllocator::Allocate(64);
-  trampoline.WriteHookFixups(addr);
-  trampoline.WriteCallback(&addr[4]);
+void install_csysmodule_load_hook() {
+  auto target = get_csysmodule_load_address();
+  if (!target) return;
+  if (!Util::protect(target, PROT_READ | PROT_WRITE | PROT_EXEC)) return;
+
+  static auto trampoline = flamingo::TrampolineAllocator::Allocate(128);
+  trampoline.WriteHookFixups(target);
+  trampoline.WriteCallback(&target[4]);
   trampoline.Finish();
 
   static auto csysmodule_load = [](char const* libname, void* param_2, uint param_3, uint param_4) noexcept -> void* {
@@ -97,105 +100,19 @@ void install_csysmodule_load_hook() {
     LOG_INFO("Library {} is being loaded", libname);
     if (std::string_view(libname) == "/pnsovr") {
       pns_ovr_handle = ret;
-      install_entitlement_patch();
-      install_prerequisites_pass_patch();
+      // install_entitlement_patch();
+      // install_prerequisites_pass_patch();
+
+      CallbackPatch::install_loggedincb_hook();
+      CallbackPatch::install_access_token_hook();
     }
     return ret;
   };
 
   size_t trampoline_size = 64;
-  auto target_hook = flamingo::Trampoline(addr, 8, trampoline_size);
+  auto target_hook = flamingo::Trampoline(target, 8, trampoline_size);
   target_hook.WriteCallback(reinterpret_cast<uint32_t*>(+csysmodule_load));
   target_hook.Finish();
 
-  protect(addr, PROT_READ | PROT_EXEC);
+  Util::protect(target, PROT_READ | PROT_EXEC);
 }
-
-#pragma endregion  // entitlementpatches
-
-#pragma region ovrpatches
-
-void* ovrplatformloader_handle;
-uint32_t* ovrplatformloader_base;
-
-void* get_ovrplatformloader_handle() {
-  if (ovrplatformloader_handle) return ovrplatformloader_handle;
-  ovrplatformloader_handle = dlopen("libovrplatformloader.so", RTLD_NOLOAD);
-  if (!ovrplatformloader_handle) {
-    LOG_ERROR("could not dlopen libovrplatformloader.so: {}", dlerror());
-    return nullptr;
-  }
-  return ovrplatformloader_handle;
-}
-
-uint32_t* get_ovrplatformloader_base() {
-  if (ovrplatformloader_base) return ovrplatformloader_base;
-  auto handle = get_ovrplatformloader_handle();
-  if (!handle) {
-    LOG_ERROR("libovrplatformloader.so handle was not found! can't get the base address");
-    return nullptr;
-  }
-
-  ovrplatformloader_base = (uint32_t*)baseAddr("libovrplatformloader.so");
-  if (!ovrplatformloader_base) {
-    LOG_ERROR("could not get the base address for libovrplatformloader.so");
-    return nullptr;
-  }
-
-  return ovrplatformloader_base;
-}
-
-static constexpr auto ret_ins = 0xD65F03C0;
-void hook_ovr_Message_GetUserArray(uint32_t* target) {
-  protect(target, PROT_READ | PROT_WRITE | PROT_EXEC);
-  *target = ret_ins;
-  protect(target, PROT_READ | PROT_EXEC);
-}
-
-void hook_ovr_Message_GetDestinationArray(uint32_t* target) {
-  protect(target, PROT_READ | PROT_WRITE | PROT_EXEC);
-  *target = ret_ins;
-  protect(target, PROT_READ | PROT_EXEC);
-}
-
-void hook_ovr_Message_GetPurchaseArray(uint32_t* target) {
-  protect(target, PROT_READ | PROT_WRITE | PROT_EXEC);
-  *target = ret_ins;
-  protect(target, PROT_READ | PROT_EXEC);
-}
-
-void hook_ovr_Message_GetProductArray(uint32_t* target) {
-  protect(target, PROT_READ | PROT_WRITE | PROT_EXEC);
-  *target = ret_ins;
-  protect(target, PROT_READ | PROT_EXEC);
-}
-
-void hook_ovr_Message_GetRoomInviteNotificationArray(uint32_t* target) {
-  protect(target, PROT_READ | PROT_WRITE | PROT_EXEC);
-  *target = ret_ins;
-  protect(target, PROT_READ | PROT_EXEC);
-}
-
-#define HOOK(method)                                          \
-  do {                                                        \
-    auto addr = (uint32_t*)dlsym(handle, #method);            \
-    if (!addr) {                                              \
-      LOG_ERROR("Could not hook " #method ": {}", dlerror()); \
-      break;                                                  \
-    }                                                         \
-    hook_##method(addr);                                      \
-  } while (0)
-
-void install_ovr_hooks() {
-  dlerror();
-  auto handle = get_ovrplatformloader_handle();
-  if (!handle) return;
-
-  HOOK(ovr_Message_GetUserArray);
-  HOOK(ovr_Message_GetDestinationArray);
-  HOOK(ovr_Message_GetPurchaseArray);
-  HOOK(ovr_Message_GetProductArray);
-  HOOK(ovr_Message_GetRoomInviteNotificationArray);
-}
-
-#pragma endregion  // ovrpatches

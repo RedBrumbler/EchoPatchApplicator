@@ -23,6 +23,10 @@ add_library(
     ${SOURCE_DIR}/main.cpp
     ${SOURCE_DIR}/util.cpp
     ${SOURCE_DIR}/patches.cpp
+    ${SOURCE_DIR}/access_token_cb_patch.cpp
+    ${SOURCE_DIR}/org_scoped_cb_patch.cpp
+    ${SOURCE_DIR}/ovr_platform_patches.cpp
+    ${SOURCE_DIR}/offline_echo_patches.cpp
 )
 
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${INCLUDE_DIR})
