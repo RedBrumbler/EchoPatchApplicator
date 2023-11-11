@@ -59,7 +59,7 @@ extern void install_loggedincb_hook() {
     // do something to make the app think we succeeded!
     get_orgScopedId() = 0xDEADBEEFDEADBEEF;
     std::snprintf(get_sorgScopedId(), 20, "%lu", 0xDEADBEEFDEADBEEF);
-    LOG_INFO("We passed {:x} as org scoped id, and {} as string id", get_orgScopedId(), get_sorgScopedId());
+    LOG_INFO("We passed 0x{:x} as org scoped id, and {} as string id", get_orgScopedId(), get_sorgScopedId());
   };
 
   std::size_t ins_count = 8;
