@@ -10,8 +10,9 @@
 #include "flamingo/shared/trampoline.hpp"
 #include "yodel/shared/modloader.h"
 
-#include "Util.hpp"
 #include "log.h"
+#include "util.hpp"
+
 
 using namespace std::string_view_literals;
 
