@@ -45,11 +45,12 @@ extern void install_loggedincb_hook() {
       "libpnsovr.so", "_ZN10NRadEngine10SCallbacks22GotLoggedInUserOrgIdCbEP10ovrMessage");
   auto target = (uint32_t*)lookup.first;
   if (!target) {
-    LOG_ERROR("Could not find symbol: {}", lookup.second);
+    LOG_ERROR("Could not find symbol _ZN10NRadEngine10SCallbacks22GotLoggedInUserOrgIdCbEP10ovrMessage: {}",
+              lookup.second);
     return;
   }
 
-  EchoUtils::protect(target, PROT_READ | PROT_WRITE | PROT_EXEC);
+  EchoUtils::protect(target, EchoUtils::RWX);
   static auto trampoline = flamingo::TrampolineAllocator::Allocate(128);
   trampoline.WriteHookFixups(target);
   trampoline.WriteCallback(&target[4]);
@@ -68,6 +69,6 @@ extern void install_loggedincb_hook() {
   target_hook.WriteCallback(reinterpret_cast<uint32_t*>(+cb_hook));
   target_hook.Finish();
 
-  EchoUtils::protect(target, PROT_READ | PROT_EXEC);
+  EchoUtils::protect(target, EchoUtils::RX);
 }
 }  // namespace CallbackPatch
