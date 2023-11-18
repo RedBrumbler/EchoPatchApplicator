@@ -17,14 +17,15 @@ This results in more or less this:
 ```
 PatchFile
 L uint32 patch set count
-  L uint32 libname length
-  L libname
-  L uint32 patch count
-  | L uint32 offset
-  | L uint32 byte count
-  | | L uint8[] bytes
-  | L ...
-  L...
+| L uint32 libname length
+| L libname
+| L uint32 patch count
+| | L uint32 offset
+| | L uint32 byte count
+| | | L uint8[] bytes
+| | L ...
+| L ...
+L ...
 ```
 
 ## Installation
