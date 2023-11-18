@@ -2,12 +2,12 @@
   "sharedDir": "shared",
   "dependenciesDir": "extern",
   "info": {
-    "name": "offline-echo",
-    "id": "offline-echo",
+    "name": "EchoPatchApplicator",
+    "id": "echo-patch-applicator",
     "version": "0.1.0",
     "url": null,
     "additionalData": {
-      "overrideSoName": "liboffline-echo.so",
+      "overrideSoName": "libecho-patch-applicator.so",
       "cmake": false
     }
   },
@@ -15,16 +15,6 @@
     {
       "id": "fmt",
       "versionRange": "^10.0.0",
-      "additionalData": {}
-    },
-    {
-      "id": "flamingo",
-      "versionRange": "^0.1.1",
-      "additionalData": {}
-    },
-    {
-      "id": "capstone",
-      "versionRange": "^0.1.0",
       "additionalData": {}
     },
     {

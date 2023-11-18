@@ -39,7 +39,6 @@ if (QUEST)
     target_link_libraries(
         ${CMAKE_PROJECT_NAME}
         log
-        ${EXTERN_DIR}/libs/libflamingo.so
         ${EXTERN_DIR}/libs/libyodel.so
         ${EXTERN_DIR}/libs/libecho-utils.so
     )
