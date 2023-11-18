@@ -68,7 +68,14 @@ extern "C" void load() {
   auto patch_dir = fmt::format("/sdcard/ModData/{}/Mods/PatchApplicator", modloader::get_application_id());
   for (auto& file : get_patches(patch_dir)) {
     for (auto& [lib, patches] : file.patchSets) {
-      auto soName = fmt::format("lib{}.so", lib.substr(1));
+      // always starts with a /, so we skip
+      auto soName = lib.substr(1);
+      if (!soName.starts_with("lib")) {  // if not starting with lib now, add it
+        soName = fmt::format("lib{}", soName);
+      }
+      if (!soName.ends_with(".so")) {  // if not ending with .so now, add it
+        soName = fmt::format("{}.so", soName);
+      }
 
       auto handle = EchoUtils::HandleUtils::get_handle_uncached(soName);
       if (handle) {
