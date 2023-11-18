@@ -12,7 +12,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED 20)
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 
-project(offline-echo VERSION ${PACKAGE_VERSION})
+project(echo-patch-applicator VERSION ${PACKAGE_VERSION})
 
 set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -21,11 +21,7 @@ add_library(
     ${CMAKE_PROJECT_NAME}
     SHARED
     ${SOURCE_DIR}/main.cpp
-    ${SOURCE_DIR}/patches.cpp
-    ${SOURCE_DIR}/access_token_cb_patch.cpp
-    ${SOURCE_DIR}/org_scoped_cb_patch.cpp
-    ${SOURCE_DIR}/ovr_platform_patches.cpp
-    ${SOURCE_DIR}/offline_echo_patches.cpp
+    ${SOURCE_DIR}/PatchFile.cpp
 )
 
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${INCLUDE_DIR})
