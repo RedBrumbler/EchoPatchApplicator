@@ -51,13 +51,13 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
-          name: liboffline-echo.so
-          path: ./build/liboffline-echo.so
+          name: libecho-patch-applicator.so
+          path: ./build/libecho-patch-applicator.so
           if-no-files-found: error
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/v')
         with:
-          files: ./build/liboffline-echo.so
+          files: ./build/libecho-patch-applicator.so
           generate_release_notes: true
