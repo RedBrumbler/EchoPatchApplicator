@@ -1,5 +1,3 @@
-#include "flamingo/shared/trampoline-allocator.hpp"
-#include "flamingo/shared/trampoline.hpp"
 #include "yodel/shared/loader.hpp"
 
 #include "PatchFile.hpp"
