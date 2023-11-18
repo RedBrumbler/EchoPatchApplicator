@@ -70,7 +70,8 @@ extern "C" void load() {
     for (auto& [lib, patches] : file.patchSets) {
       auto soName = fmt::format("lib{}.so", lib.substr(1));
 
-      if (lib == "/r15") {
+      auto handle = EchoUtils::HandleUtils::get_handle_uncached(soName);
+      if (handle) {
         apply_patches(soName, patches);
       } else {
         EchoUtils::Callbacks::add_library_callback(
