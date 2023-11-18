@@ -64,10 +64,10 @@ PatchFile PatchFile::read(std::filesystem::path filepath) {
       std::vector<uint8_t> bytes;
       bytes.resize(patchlen);
       file.read(reinterpret_cast<char*>(bytes.data()), patchlen);
-      patches.emplace_back(offset, bytes);
+      patches.push_back({ offset, bytes });
     }
 
-    patchSets.emplace_back(libName, patches);
+    patchSets.push_back({ libName, patches });
   }
 
   file.close();
